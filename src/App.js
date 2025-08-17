@@ -1,23 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import NavBar from "./components/navbar";
+import Clock from "./components/clock";
+import StopWatch from "./components/stopWatch";
+import Alarm from "./components/alarm";
+import "./App.css";
+import {useState } from "react";
 
 function App() {
+  const [isopen, setIsOpen] = useState(1);
+  function handleOpened(openNum){
+    setIsOpen(openNum)
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <NavBar onOpenedTap={handleOpened}/>
+      <div className="content-card">
+        {isopen === 1 ? <Clock /> : isopen === 2 ? <StopWatch /> : <Alarm />}
+      </div>
     </div>
   );
 }
