@@ -1,20 +1,44 @@
 import { useEffect, useState, useRef } from "react";
+
 export default function StopWatch() {
-  const [isRunning, setIsRunning] = useState(false);
-  const [stopWatch, setStopWatch] = useState(0);
+  const [isRunning, setIsRunning] = useState(
+    () => JSON.parse(localStorage.getItem("isRunning")) || false
+  );
+  const [stopWatch, setStopWatch] = useState(
+    () => JSON.parse(localStorage.getItem("stopWatch")) || 0
+  );
   const audioRef = useRef(null);
 
   useEffect(() => {
     let interval;
     if (isRunning) {
       interval = setInterval(() => {
-        setStopWatch((pre) => pre + 1);
+        setStopWatch((prev) => prev + 1);
       }, 1);
     } else {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
   }, [isRunning]);
+
+  // 🔹 Save state whenever it changes
+  useEffect(() => {
+    localStorage.setItem("isRunning", JSON.stringify(isRunning));
+    localStorage.setItem("stopWatch", JSON.stringify(stopWatch));
+  }, [isRunning, stopWatch]);
+
+  // 🔹 Stop sound when component unmounts
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      else{
+        runWatch();
+      }
+    };
+  }, []);
 
   const formatTime = (ms) => {
     const minutes = Math.floor(ms / 60000);
@@ -24,25 +48,37 @@ export default function StopWatch() {
       .toString()
       .padStart(2, "0")}:${milliseconds.toString().padStart(2, "0")}`;
   };
+
   const runWatch = () => {
     if (!audioRef.current) {
-      audioRef.current = new Audio("/Tic-Tac-Mechanical-Alarm-Clock-2-chosic.com_.mp3");
+      audioRef.current = new Audio(
+        "/Tic-Tac-Mechanical-Alarm-Clock-2-chosic.com_.mp3"
+      );
     }
     audioRef.current.loop = true;
     audioRef.current.play();
     setIsRunning(true);
   };
+
   const closeWatch = () => {
-   audioRef.current.pause();
+    if (audioRef.current) {
+      audioRef.current.pause();
       audioRef.current.currentTime = 0;
+    }
     setIsRunning(false);
     setStopWatch(0);
+    localStorage.removeItem("stopWatch"); // reset storage
+    localStorage.removeItem("isRunning");
   };
+
   const pauseWatch = () => {
-   audioRef.current.pause();
+    if (audioRef.current) {
+      audioRef.current.pause();
       audioRef.current.currentTime = 0;
+    }
     setIsRunning(false);
   };
+
   return (
     <div className="count-down">
       <span>Stop Watch</span>
