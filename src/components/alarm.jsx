@@ -4,6 +4,7 @@ export default function Alarm() {
   const [time, setTime] = useState(new Date());
   const [alarmTime, setAlarmTime] = useState("");
   const [alarmSet, setAlarmSet] = useState(false);
+  const [showButtons,setShowButtons]=useState(false);
   const audioRef = useRef(null);
   useEffect(() => {
     const timerId = setInterval(() => {
@@ -16,7 +17,8 @@ export default function Alarm() {
   useEffect(() => {
     if (alarmSet && time.toLocaleTimeString() === alarmTime) {
       playAlarm();
-      alert("ring")
+      setShowButtons(true);
+      alert("ring");
     }
   }, [time, alarmTime, alarmSet]);
 
@@ -89,14 +91,16 @@ export default function Alarm() {
           Set
         </button>
       </form>
-      <div className="alarm-btns">
-        <button className="stopBtn" onClick={stopAlarm}>
-          <i className="fa-solid fa-stop"></i>
-        </button>
-        <button className="snoozeBtn" onClick={snoozeAlarm}>
-          <i className="fi fi-rs-alarm-snooze"></i>
-        </button>
-      </div>
+      {showButtons && (
+        <div className="alarm-btns">
+          <button className="stopBtn" onClick={stopAlarm}>
+            <i className="fa-solid fa-stop"></i>
+          </button>
+          <button className="snoozeBtn" onClick={snoozeAlarm}>
+            <i className="fi fi-rs-alarm-snooze"></i>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
