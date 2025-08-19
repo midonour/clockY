@@ -16,7 +16,7 @@ export default function Alarm() {
   useEffect(() => {
     if (alarmSet && time.toLocaleTimeString() === alarmTime) {
       playAlarm();
-      alert("ringggg");
+      alert("ring")
     }
   }, [time, alarmTime, alarmSet]);
 
